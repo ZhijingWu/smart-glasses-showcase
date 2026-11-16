@@ -1,0 +1,3 @@
+* -text
+.github/workflows/*.yml text eol=lf
+README.md text eol=lf

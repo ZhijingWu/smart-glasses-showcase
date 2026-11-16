@@ -1,0 +1,66 @@
+name: Publish approved research showcase
+
+on:
+  workflow_dispatch:
+    inputs:
+      approved_snapshot_sha256:
+        description: SHA-256 explicitly approved by the research owner
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Verify approved snapshot and static asset hashes
+        env:
+          EXPECTED_SNAPSHOT_SHA256: ${{ inputs.approved_snapshot_sha256 }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, readdirSync } from 'node:fs';
+          import { createHash } from 'node:crypto';
+          const hash = bytes => createHash('sha256').update(bytes).digest('hex');
+          const release = JSON.parse(readFileSync('site/release.json', 'utf8'));
+          const snapshotBytes = readFileSync('site/approved-snapshot.json');
+          const snapshot = JSON.parse(snapshotBytes);
+          if (release.snapshotSHA256 !== process.env.EXPECTED_SNAPSHOT_SHA256 || hash(snapshotBytes) !== release.snapshotSHA256)
+            throw new Error('Snapshot does not match the explicitly approved SHA-256.');
+          if (snapshot.version !== release.version || snapshot.papers.length !== release.paperCount)
+            throw new Error('Release identity mismatch.');
+          const actual = [];
+          function verify(directory, prefix = '') {
+            for (const entry of readdirSync(directory, { withFileTypes: true })) {
+              if (entry.isSymbolicLink()) throw new Error('Unexpected symlink.');
+              const name = prefix + entry.name, path = directory + '/' + entry.name;
+              if (entry.isDirectory()) verify(path, name + '/');
+              else if (name !== 'release.json') {
+                actual.push(name);
+                if (hash(readFileSync(path)) !== release.files[name]) throw new Error('Unreviewed asset: ' + name);
+              }
+            }
+          }
+          verify('site');
+          if (JSON.stringify(actual.sort()) !== JSON.stringify(Object.keys(release.files).sort()))
+            throw new Error('Release file inventory mismatch.');
+          console.log('Verified approved release', release.version, release.snapshotSHA256, release.paperCount);
+          NODE
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
+        with:
+          path: site
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
