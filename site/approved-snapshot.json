@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "2026-11-16-v1",
+  "version": "2026-11-17-v2",
   "papers": [
     {
       "id": "point3r",
@@ -224,6 +224,116 @@
       "outputAnswer": "实时生成的文本和语音回答，也可以根据当前场景主动发起交互；生成过程中仍可持续接收新的音视频信息"
     },
     {
+      "id": "vsi-bench",
+      "title": "VSI-Bench",
+      "fullTitle": "Thinking in Space: How Multimodal Large Language Models See, Remember, and Recall Spaces",
+      "authors": "Jihan Yang, Shusheng Yang, Anjali W. Gupta, Rilyn Han, Li Fei-Fei, Saining Xie",
+      "year": 2025,
+      "venue": "CVPR",
+      "paperUrl": "https://arxiv.org/abs/2412.14171",
+      "projectUrl": "https://vision-x-nyu.github.io/thinking-in-space.github.io/",
+      "codeUrl": "https://github.com/vision-x-nyu/thinking-in-space",
+      "primaryCategory": "benchmarks",
+      "status": "complete",
+      "problemAnswer": "多模态大型语言模型能否从视频中真正获取在空间中思考和理解的能力？",
+      "motivationAnswer": "人类拥有丰富的感官来帮助我们在脑海里搭建三维世界，使我们能够感知、理解并与之互动。目前的大语言模型拥有先进的语言能力，但是视觉空间智能还有很大的发展空间。\n因此这篇工作就是搭建了一个 benchmark，能够去从多方面评估多模态大语言模型在空间里的思考和理解能力。",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "evaluationDesign": {
+        "dataset": "公开的室内3D场景重建数据集ScanNet、ScanNet++和ARKitScenes的验证集，从中选取 288 段真实视频，再做出 5,000 多对题目",
+        "tasks": "三个大类：configurational, measurement estimation, spatiotemporal\n八个任务：\n1. Configurational tasks : object count, relative distance, relative direction, route plan\n2. Measurement estimation : object size, room size, absolute distance\n3. Spatiotemporal : Appearance Order",
+        "metricsProtocol": "Metrics：\n选择题（MCA）： 准确率（ACC）\n数字题（NA）：平均相对准确率（MRA）\nProtocol：\n主要采用离线视频问答设置，模型根据给定的视频回答空间问题，不要求实时增量处理视频流"
+      }
+    },
+    {
+      "id": "ucs-bench",
+      "title": "UCS-Bench",
+      "fullTitle": "Keep It in Mind: User Centric Continual Spatial Intelligence Reasoning in Egocentric Video Streams",
+      "authors": "Yun Wang et al.",
+      "year": 2026,
+      "venue": "ICML",
+      "paperUrl": "https://proceedings.mlr.press/v306/wang26je.html",
+      "projectUrl": "",
+      "codeUrl": "https://github.com/cocowy1/UCS-Bench",
+      "primaryCategory": "benchmarks",
+      "status": "complete",
+      "problemAnswer": "如何评估大语言模型在第一人称视频下进行流式在线空间理解的能力，特别是环境（室内和室外、静态与动态）相对于用户实时移动的方向和位置推理问题",
+      "motivationAnswer": "以用户为中心的持续空间智能对于 smart glasses 这种AI助手至关重要，这种维持和更新以自我为中心的空间的能力可以帮用户解决很多问题。\n目前大部分以用户为中心的持续空间智能大多使用图像或离线短视频片段，并且仅采用第三人称视角诊断。在这些情况下，空间关系大多局限于静态的室内场景，和真实环境里的环境动态变化差的很远。\n这篇工作就是想要搭建一个benchmark，用于评估大语言模型在第一人称视频下进行流式在线空间理解的能力，特别是环境相对于用户实时移动的方向和位置推理这一类动态空间问题",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "evaluationDesign": {
+        "dataset": "六个视频源 HourVideo、ScanNet、EgoLife、EgoBlind、EPIC-KITCHENS 和 TeleEgo 中筛选的532个第一人称视频，从中筛选8,114 对 QA并经过人工审核。",
+        "tasks": "四个维度：\n1. Position & Orientation\n2. Trajectory & Movement\n3. Proximity & Reachability\n4. Category & Quantity",
+        "metricsProtocol": "Metrics： 多项选择题采用 Accuracy（准确率），分别统计四大任务类别、细分任务以及 Overall 的表现。\nProtocol： 每个问题都有对应的 Query Timestamp，模型只能利用该时刻之前已观察到的视频信息，不能使用未来帧。回答需要结合历史空间信息和用户当前的位置、朝向。"
+      }
+    },
+    {
+      "id": "egorecall",
+      "title": "EgoRecall",
+      "fullTitle": "EgoRecall: 3D Visual Grounding from Streaming Egocentric Observations",
+      "authors": "Hou In Ivan Tam, Manolis Savva",
+      "year": 2026,
+      "venue": "",
+      "paperUrl": "https://www.alphaxiv.org/abs/2609.egorecall",
+      "projectUrl": "https://3dlg-hcvc.github.io/EgoRecall/",
+      "codeUrl": "",
+      "primaryCategory": "benchmarks",
+      "status": "complete",
+      "problemAnswer": "如何评测模型，根据流式第一人称的历史观察和自然语言描述，在三维空间中定位对应物体的能力？",
+      "motivationAnswer": "3DVG 将语言与物理空间连接起来，对流式空间理解至关重要。然而，目前的工作大多在离线环境中研究3DVG，和真实世界不符。\n基于这个研究基础，论文发现已有 3DVG Benchmark 通常缺少任务所需的监督：观测历史、精确的查询时间戳，以及由当时可用观测数据定义的真实参考。\n因此，这篇工作就希望建立一套基于自我中心观察流式三维视觉基础的数据集和基准，用来评测模型基于观察到的物体对三维空间进行建模的能力。",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "evaluationDesign": {
+        "dataset": "基于 ScanNet++ 的 183 个室内场景，包含约 12.1 小时第一人称视频、21,331 个物体实例和 225 万条带时间戳的查询。\n查询由 22 种操作符组合生成，涉及观察历史、相机相对关系和物体间空间关系。每个问题的答案由查询时刻之前的可见物体历史确定。",
+        "tasks": "根据查询时刻之前已经观察到的第一人称视频和自然语言指代描述，在三维空间中定位对应的物体实例。\n查询条件主要涉及三个维度：\n1. Observation History：物体被观察到的时间、顺序和最近观察信息。\n2. Egocentric Relationships：物体相对于观察者的方向、距离等空间关系。\n3. Allocentric Structure：不同物体之间的空间关系。",
+        "metricsProtocol": "Metrics：\n- Coverage：候选记忆中是否至少包含一个正确目标。\n- Selection F1：在至少有正确目标可供选择时，衡量模型能否正确选出目标物体集合。\n- Full F1：衡量整个三维物体定位流程的最终表现，包括历史物体未被保留造成的错误。\n\nProtocol：\n每个问题都有 Query Timestamp，模型只能使用该时刻之前已经观察到的视频信息，不能利用未来帧。目标物体可能已经离开当前视野，需要结合历史观察进行定位。"
+      }
+    },
+    {
+      "id": "ego-spacr",
+      "title": "Ego-SpaCR",
+      "fullTitle": "Have I Scene This Before? Spatially Grounded Conversational Memory for Complex Queries in Egocentric Assistants",
+      "authors": "Jiazhou Liang et al.",
+      "year": 2026,
+      "venue": "",
+      "paperUrl": "https://arxiv.org/abs/2610.05526",
+      "projectUrl": "",
+      "codeUrl": "",
+      "primaryCategory": "benchmarks",
+      "status": "complete",
+      "problemAnswer": "如何全面评估 SpaCR 的空间基础会话推理能力，特别是物体基准、定性关系、几何性质、反事实空间处理这四个属性",
+      "motivationAnswer": "目前的 benchmark 无法贴合这个 SpaCR 的功能测试需求，也就是说需要一个 benchmark 来测试模型整合会话证据与空间证据，最后实现真正的空间推理的能力。",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "evaluationDesign": {
+        "dataset": "第一人称的 SpaCR 数据集，包含来自 ScanNet 的 620 个视频会话，并补充了 95 个真实场景上构建出来的对话，平均每个对话回合 230 次，以及 3,100 个评估查询。",
+        "tasks": "1. Object grounding\n2. Qualitative relations\n3. Geometric properties\n4. Counterfactual spatial reasoning",
+        "metricsProtocol": "Metrics：\n- Answer Accuracy：衡量模型最终回答是否正确。\n- Object Recall：对于涉及多个物体的问题，检查模型是否正确找回符合条件的物体集合。\n\nProtocol：\n模型根据历史视频、跨会话的对话记录和当前问题进行空间推理。"
+      }
+    },
+    {
+      "id": "ovo-s-bench",
+      "title": "OVO-S-Bench",
+      "fullTitle": "OVO-S-Bench: A Hierarchical Benchmark for Streaming Spatial Intelligence in Multimodal LLMs",
+      "authors": "Yifei Li et al.",
+      "year": 2026,
+      "venue": "EMNLP",
+      "paperUrl": "https://aclanthology.org/2026.emnlp-main.2374/",
+      "projectUrl": "",
+      "codeUrl": "",
+      "primaryCategory": "benchmarks",
+      "status": "complete",
+      "problemAnswer": "如何评估流式空间智能在四个不同能力层级的问题上的表现，依次为Instantaneous Egocentric Perception（即时空间感知）、Spatial-Temporal Context Tracking（时空上下文追踪）、Generative Spatial Reasoning（生成式空间推理）、Allocentric Spatial Mapping（全局空间建图）这四个递进难度的任务。",
+      "motivationAnswer": "现有的基准尚未对流媒体空间体系进行测试。空间评估和流式评估没有整合到一个流式空间理解的体系里面，空间评估仍依赖于碎片化、离散的帧感知，而流式评估则针对语义和事件回忆。\n因此，这篇工作就是要将空间和流式这两个时空维度上的能力结合起来，完成一个第一人称的流式空间智能的体系化测评。",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "evaluationDesign": {
+        "dataset": "视频来源参考了 9 个公开或可访问的来源，涵盖五大模式：室内演示（RoomTour3D ）、自我中心活动（Ego4D）、户外/世界场景（Sekai、OmniWorld、YouTube 徒步游览）、驾驶视频（CODa 和 Honda HDD），以及带有空间注释的 3D 环境（ARKitScenes 和 VSI-Bench）。后续由12名受过培训的批注员完成 348 个源视频中的 1,680 个问题。",
+        "tasks": "L1——Instantaneous Egocentric Perception（即时空间感知）\nL2——Spatial-Temporal Context Tracking（时空上下文追踪）\nL3——Generative Spatial Reasoning（生成式空间推理）\nL4——Allocentric Spatial Mapping（全局空间建图）",
+        "metricsProtocol": "Metrics：Multiple-choice Accuracy（选择题准确率），分别报告 L1–L4 四个层级以及 Overall 的成绩。\nProtocol：每道问题都有 Query Timestamp，模型只能使用查询时刻之前的视频，不能访问未来帧。"
+      }
+    },
+    {
       "id": "r4dsg",
       "title": "R4DSG",
       "fullTitle": "R4DSG: Relative 4D Scene Graph Memory for Object-Centric Question Answering in Long Egocentric Video",
@@ -290,6 +400,23 @@
       "motivationAnswer": "现有的视觉大模型在理解日常人类活动和细粒度更粗糙的事件上面能力更强，而在细粒度更细的动作上面，比如动作原子性、时间精度和手-动作的关联这几个角度上面并没有专门的训练。\n已有的工作和 benchmark 都更关注前者，因此这一篇工作专注于细粒度更细的动作分解的benchmark，希望解决模型学习细致的人类动作行为这方面的空白。",
       "inputAnswer": "连续的第一人称人类操作视频",
       "outputAnswer": "模型需要识别并描述视频中的细粒度动作，给出每个动作的开始与结束时间，以及执行动作的是左手、右手还是双手。\n同时，benchmark 会将模型预测与人工标注的真实动作进行对比，评估动作语义、时间定位和手-动作关联的准确程度。"
+    },
+    {
+      "id": "osca",
+      "title": "OSCA",
+      "fullTitle": "Object State Change Anticipation in Procedural Videos: The OSCA Task, Benchmark, and Baseline",
+      "authors": "Victoria Manousaki, Konstantinos Bacharidis, Filippos Gouidis, Konstantinos Papoutsakis, Dimitris Plexousakis, Antonis Argyros",
+      "year": 2026,
+      "venue": "Sensors",
+      "paperUrl": "https://users.ics.forth.gr/~argyros/mypapers/2026_journal_Sensors_OSCA.pdf",
+      "projectUrl": "",
+      "codeUrl": "",
+      "primaryCategory": "temporal",
+      "status": "complete",
+      "problemAnswer": "如何训练模型在已有的视频作为数据基础的情况下，预测未来物理环境状态变化的能力",
+      "motivationAnswer": "识别和预判对象状态及其变化对于模型来说很重要，模型如果学会了这个能力就可以更好地完成活动理解、推理和任务规划这些任务。\n然而，目前的大模型主要在研究视觉对象感知、下一个主动物体预测和动作识别等问题，却鲜有工作在研究大模型预测下一步物体状态的变化这个问题。\n因此，这个工作就想要训练模型在已有的视频作为数据基础的情况下，预测未来物理环境状态变化的能力",
+      "inputAnswer": "截至当前时刻已观察到的第一人称视频，以及过去的动作和物体状态变化历史",
+      "outputAnswer": "预测下一个尚未观察到的动作将引起的物体状态变化类别"
     },
     {
       "id": "lenswalk",

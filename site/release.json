@@ -1,14 +1,14 @@
 {
-  "version": "2026-11-16-v1",
-  "snapshotSHA256": "b9c37bdf5469e4521636d2d4fd17b25f7f253b26d80a54ff8aef2ae4b5467a46",
-  "paperCount": 18,
+  "version": "2026-11-17-v2",
+  "snapshotSHA256": "f5ccce863b66f3ac4dff135c4c3a2581383580ffdaa13a8b075155bdaff0bba5",
+  "paperCount": 24,
   "files": {
     ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "approved-snapshot.json": "b9c37bdf5469e4521636d2d4fd17b25f7f253b26d80a54ff8aef2ae4b5467a46",
-    "assets/index-D1yXep13.js": "a238f22d08a1b5fb1e71e0c904ded91562b86cea943a2a41b5e73f1b92b022ca",
-    "assets/index-VhUIVuhs.css": "cb57491b182e6cb107d4c7af26d87c25d40080aa4c7e030e964c246d1e5eaa23",
+    "approved-snapshot.json": "f5ccce863b66f3ac4dff135c4c3a2581383580ffdaa13a8b075155bdaff0bba5",
+    "assets/index-CaAw-yxC.js": "987c3b8c95faceb8e74eb6443ab43e60b5507727a72a6352b224090932cab22c",
+    "assets/index-CSZRUObT.css": "4290d02dabf97dfc94458f431f7c3aa31e3fb792c41ba9d4c6ec5f1232904735",
     "favicon.svg": "4492141b3441d6964dfdce06ad039c91b8a8d94db72e3e25c2cf7b3b9b807140",
-    "index.html": "7ed80254f1fc92482f29887623a5961f750f2899afa3e16c7e12e4e44ae3d6b5",
+    "index.html": "2dd515aab9d9eb1beeaab62e386d9756da0c93621467100f09ec5d5f4dd71da2",
     "THIRD_PARTY_NOTICES.txt": "1ac17f5a9b7133e74d4974e4ad8545c20367c2757f52805f1b17b48515d92d99"
   }
 }
