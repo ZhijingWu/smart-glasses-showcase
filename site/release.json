@@ -1,14 +1,14 @@
 {
-  "version": "2026-11-17-v2",
-  "snapshotSHA256": "f5ccce863b66f3ac4dff135c4c3a2581383580ffdaa13a8b075155bdaff0bba5",
-  "paperCount": 24,
+  "version": "2026-11-20-v3",
+  "snapshotSHA256": "57cadab8d2a70fd242eff94d812fa61ba01b12b6c453e06d86b7c3f749c5f074",
+  "paperCount": 25,
   "files": {
     ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "approved-snapshot.json": "f5ccce863b66f3ac4dff135c4c3a2581383580ffdaa13a8b075155bdaff0bba5",
-    "assets/index-CaAw-yxC.js": "987c3b8c95faceb8e74eb6443ab43e60b5507727a72a6352b224090932cab22c",
+    "approved-snapshot.json": "57cadab8d2a70fd242eff94d812fa61ba01b12b6c453e06d86b7c3f749c5f074",
     "assets/index-CSZRUObT.css": "4290d02dabf97dfc94458f431f7c3aa31e3fb792c41ba9d4c6ec5f1232904735",
+    "assets/index-Cu0mPen9.js": "870d9740451e7eb1d2f91063958e888719e8fa143faddd2289555fee4a763e5f",
     "favicon.svg": "4492141b3441d6964dfdce06ad039c91b8a8d94db72e3e25c2cf7b3b9b807140",
-    "index.html": "2dd515aab9d9eb1beeaab62e386d9756da0c93621467100f09ec5d5f4dd71da2",
+    "index.html": "06b82d2bfc137ea454e59a6a32d7dfa4366bd72bb764fbd5fae0c4456ab20c52",
     "THIRD_PARTY_NOTICES.txt": "1ac17f5a9b7133e74d4974e4ad8545c20367c2757f52805f1b17b48515d92d99"
   }
 }

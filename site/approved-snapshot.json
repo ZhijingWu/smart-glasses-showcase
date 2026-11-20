@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "2026-11-17-v2",
+  "version": "2026-11-20-v3",
   "papers": [
     {
       "id": "point3r",
@@ -434,6 +434,23 @@
       "motivationAnswer": "视频理解的信息量很大，需要模型带着明确的目的和问题来解决。但目前很多方法会先对视频进行固定采样或预处理，再根据这些信息完成推理。虽然有些方法已经能够主动检索历史证据，但仍可能受到预先生成的信息和固定观察粒度的限制，无法根据推理过程中不断变化的需求重新观察原始视频。\n因此，这篇工作希望让模型具备主动探索已有视频的能力，根据当前推理需要，决定看哪段视频、看得多细，并通过多轮推理、计划和观察逐步找到答案。",
       "inputAnswer": "已有的视频 + 用户问题",
       "outputAnswer": "通过多轮理由-计划-观察循环最终得到的回答"
+    },
+    {
+      "id": "aura-2-0",
+      "title": "AURA 2.0",
+      "fullTitle": "Beyond Answering: Learning to Speak First and Act in Streaming Video",
+      "authors": "Shuhan Li et al.",
+      "year": 2026,
+      "venue": "arXiv Preprint",
+      "paperUrl": "https://arxiv.org/abs/2611.17048",
+      "projectUrl": "https://aurateam2026.github.io/Aura-2.0/",
+      "codeUrl": "",
+      "primaryCategory": "streaming",
+      "status": "complete",
+      "problemAnswer": "如何在 AURA 的基础上，改变原本 user-driven 的交互模式，让模型能够主动发现视频中值得讨论的事情，并在合适的时候发起对话，同时进一步提升模型的交互能力",
+      "motivationAnswer": "AURA 已经实现了流式视频的实时交互，但目前的交互还是主要依赖用户提前提出的问题，即使是 Proactive QA，也需要用户先给出任务。这就限制了模型主动发现有价值事件并发起对话的能力。\n此外，AURA 的历史信息主要依赖最近的视频窗口和 QA History，而用户的问题无法覆盖过去所有重要的视觉信息，因此长时间运行时仍然可能丢失历史信息。\n因此，AURA 2.0 希望一步改变 user-driven 的交互方式，同时改善长期记忆、工具调用和视觉定位等能力",
+      "inputAnswer": "持续输入的流式视频 + 可选的用户问题、历史交互信息和工具返回的信息",
+      "outputAnswer": "根据视频和上下文选择沉默或生成回答，也可以主动发起对话、调用外部工具，或者输出与视频对应的物体定位框。系统内部还会维护历史记忆"
     }
   ]
 }
