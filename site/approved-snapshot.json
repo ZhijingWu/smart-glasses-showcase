@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "2026-11-20-v3",
+  "version": "2026-11-23-v4",
   "papers": [
     {
       "id": "point3r",
@@ -451,6 +451,111 @@
       "motivationAnswer": "AURA 已经实现了流式视频的实时交互，但目前的交互还是主要依赖用户提前提出的问题，即使是 Proactive QA，也需要用户先给出任务。这就限制了模型主动发现有价值事件并发起对话的能力。\n此外，AURA 的历史信息主要依赖最近的视频窗口和 QA History，而用户的问题无法覆盖过去所有重要的视觉信息，因此长时间运行时仍然可能丢失历史信息。\n因此，AURA 2.0 希望一步改变 user-driven 的交互方式，同时改善长期记忆、工具调用和视觉定位等能力",
       "inputAnswer": "持续输入的流式视频 + 可选的用户问题、历史交互信息和工具返回的信息",
       "outputAnswer": "根据视频和上下文选择沉默或生成回答，也可以主动发起对话、调用外部工具，或者输出与视频对应的物体定位框。系统内部还会维护历史记忆"
+    },
+    {
+      "id": "egowitness",
+      "title": "EgoWitness",
+      "fullTitle": "EgoWitness: Benchmarking Instance-Level Spatial Memory and Reasoning in Egocentric Video Streams",
+      "authors": "Zhengru Fang et al.",
+      "year": 2026,
+      "venue": "arXiv Preprint",
+      "paperUrl": "https://arxiv.org/abs/2611.25849",
+      "projectUrl": "",
+      "codeUrl": "",
+      "primaryCategory": "spatial",
+      "status": "complete",
+      "problemAnswer": "如何构建一个 Benchmark，检验模型能否在长时间的第一人称视频中识别和记住具体的物体实例，并结合不同时间、地点和观察者的信息进行空间记忆与推理",
+      "motivationAnswer": "已有的长视频 Benchmark 更关注事件记忆、物体类别和相对空间关系等能力，但很少专门检验模型能否在不同时间、不同视角的视频中，识别出同一个物理对象。比如模型可能记得昨天有人看见过杯子，却无法确认今天看到的是不是同一个杯子，也不一定知道是谁最后看见它的。\n因此，这篇工作希望通过一个新的 Benchmark，专门评估模型的实例级空间记忆和推理能力，并进一步通过 EgoClue 尝试改善这类任务的表现。",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "evaluationDesign": {
+        "dataset": "8,453道经人力验证的问题，涵盖约324小时的一周及短期录音，测试七项能力，从识别物体或房间到回忆谁见过，以及推理访问房间",
+        "tasks": "分为两大类，共七种任务：\n1. Object Identity & Memory（Q01–Q04）：判断是否为同一个物体实例、谁看到了它、最后由谁看到，以及它在哪些时间片段中出现。\n2. Room Identity & Visit Reasoning（Q05–Q07）：判断房间身份、房间之间的最短路径，以及房间访问的顺序、时长和次数。",
+        "metricsProtocol": "主要使用 Micro Accuracy 和 Macro Accuracy：\n- Micro：所有问题的整体准确率。\n- Macro：七类任务分别计算准确率后取平均，避免题目数量不同造成偏重。\n\n评测采用选择题形式。Direct VLM 使用有限的采样视频帧，Agent 则能够主动检索视频片段和历史信息。"
+      }
+    },
+    {
+      "id": "proactegomem",
+      "title": "ProactEgoMem",
+      "fullTitle": "ProactEgoMem: Benchmarking Proactive Memory in Streaming Egocentric Video",
+      "authors": "Ruotong Liao et al.",
+      "year": 2026,
+      "venue": "arXiv Preprint",
+      "paperUrl": "https://arxiv.org/abs/2610.30089",
+      "projectUrl": "https://proactegomem.github.io/",
+      "codeUrl": "https://github.com/mayhugotong/ProactEgoMem",
+      "primaryCategory": "memory",
+      "status": "complete",
+      "problemAnswer": "如何构建一个 Benchmark，评估模型在流式视频中主动获取和维护记忆的能力，包括两个层级：较简单的主动通知（Notification），以及更进一步的主动记忆维护（Intervention），即模型自主决定何时开始、维持和结束一个记忆任务",
+      "motivationAnswer": "现有关于模型会proactive的工作主要还是关注于在过程中模型提问的能力，但缺乏对于模型记忆层面的主动性的研究：什么东西重要，需要重点关注和记忆；什么东西不重要，可以适当舍弃。\n因此，这篇工作提出 ProactEgoMem，评估模型能否主动获取、维护和利用这些历史信息，并通过 Notification 和 Intervention 两种层级来衡量主动性",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "evaluationDesign": {
+        "dataset": "数据分为 Daily 和 Sci 两部分：\n- Daily： 来自 Ego4D 的 300 段日常生活视频，约 16 小时，包含 1,242 个标注事件和 1,000 道 QA。\n- Sci： 来自实验室场景的 100 段视频，约 6.5 小时，包含 1,377 个标注事件和 500 道 QA。\n数据标注包含事件的开始、结束时间以及相关对象。",
+        "tasks": "三类任务：\n- Information Capture（IC）： 及时保存价格、标签、说明等短暂出现的信息。\n- State Tracking（ST）： 追踪物体状态变化，例如开关状态和持续时间。\n- Location Tracking（LT）： 追踪物体从哪里被拿走、放在哪里，以及位置变化。\n每种任务都有两个主动性层级：Notification（及时发出通知）和 Intervention（主动调用工具，开始、维护并结束记忆任务）",
+        "metricsProtocol": "- 事件匹配与时机： 评估模型通知或工具调用是否匹配正确事件，以及开始时间的偏差\n- Precision / Recall / F1： 评价主动行为是否准确、是否漏掉重要事件\n- ProactEgoMem-QA： 根据模型主动获取的记忆回答后续选择题，计算 Accuracy"
+      }
+    },
+    {
+      "id": "s-ember",
+      "title": "S-EMBER",
+      "fullTitle": "S-EMBER: A Large-Scale Benchmark for Streaming Egocentric Memory Retrieval",
+      "authors": "Xiaodong Wang et al.",
+      "year": 2026,
+      "venue": "arXiv Preprint",
+      "paperUrl": "https://arxiv.org/abs/2607.02689",
+      "projectUrl": "https://ai.meta.com/research/publications/s-ember-a-large-scale-benchmark-for-streaming-egocentric-memory-retrieval/",
+      "codeUrl": "https://github.com/facebookresearch/S-EMBER",
+      "primaryCategory": "benchmarks",
+      "status": "complete",
+      "problemAnswer": "如何构建一个更符合真实 Smart Glasses 场景的长期记忆 Benchmark，评估模型能否在持续到来的视频中，回忆过去发生的事，并定位支持回答的历史视频证据",
+      "motivationAnswer": "已有很多长视频 Benchmark 使用 Offline QA，即模型可以访问完整视频后再回答问题。但现实中的智能眼镜是在不断接收视频的过程中回答用户的问题，不能提前看到未来的信息。\n此外，模型即使答对了问题，也不一定是真的记住了过去发生的事情，有可能只是猜对了。\n因此，这篇工作不仅要求模型正确回答，还要找到对应的历史视频片段作为证据，从而更严格地评估流式长期记忆能力。",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "evaluationDesign": {
+        "dataset": "3,141 段真实第一人称视频，总计 388 小时，使用 Ray-Ban Meta 智能眼镜采集。\n包含 9,448 个 QA Pair，每道题包含提问时间和对应的历史视频证据区间。",
+        "tasks": "流式 Episodic Memory Retrieval：模型在某个时间点接收到历史记忆问题，需要利用此前的视频回答，并找出对应的证据时间段。\n涵盖八类问题：位置变化、连续动作、计数、视觉细节回忆、时间顺序、持续时长、物体比较、空间关系推理。",
+        "metricsProtocol": "Metrics：\nQA Accuracy：回答是否正确。\nTemporal IoU：预测证据时间段与 Ground Truth 时间段的重合程度。\nGrounded QA：同时考虑回答正确性和证据定位是否成功。\n\nProtocol：\nCausal Streaming：只能访问提问时间之前的视频，不能看到未来帧。"
+      }
+    },
+    {
+      "id": "vinci2",
+      "title": "Vinci2",
+      "fullTitle": "Vinci2: Providing Proactive Assistance in Continuous Egocentric Videos",
+      "authors": "Sitong Gong et al.",
+      "year": 2026,
+      "venue": "ECCV 2026",
+      "paperUrl": "https://arxiv.org/abs/2607.11523",
+      "projectUrl": "https://sitonggong.github.io/EgoServe-page/",
+      "codeUrl": "",
+      "primaryCategory": "streaming",
+      "status": "complete",
+      "problemAnswer": "如何让 egocentric assistant 结合用户的历史信息和当前流式视频，自主判断是否需要主动介入、什么时候介入，以及应该提供什么帮助，而不是单纯等待用户提出问题",
+      "motivationAnswer": "已有的第一人称助手更加擅长于被动式回答用户的问题，或者对每一个事件级的event进行响应，并不能够做到真实的助手一样，在合适的时间，根据用户的历史信息背景和流式视频的信息，提出合适的问题或者帮助。\n因此，这篇工作希望实现更加主动的辅助方式，让模型在没有用户明确提问的情况下，也能够根据上下文决定是否介入、何时介入以及提供什么帮助。同时构建 EgoServe Benchmark，专门评估这种主动辅助能力",
+      "inputAnswer": "持续输入的第一人称流式视频 + 用户历史信息与长期记忆 + 用户问题（可选）",
+      "outputAnswer": "模型自主决定是否提供帮助；如果需要，则在合适的时间输出与当前场景和历史信息相关的提醒、建议或指导，否则保持沉默"
+    },
+    {
+      "id": "egomemreason",
+      "title": "EgoMemReason",
+      "fullTitle": "EgoMemReason: A Memory-Driven Reasoning Benchmark for Long-Horizon Egocentric Video Understanding",
+      "authors": "Ziyang Wang et al.",
+      "year": 2026,
+      "venue": "COLM 2026",
+      "paperUrl": "https://proceedings.colm.cc/paper_files/paper/2026/hash/a4e720ce31ccd8ba747d8863e1580fa8-Abstract-Conference.html",
+      "projectUrl": "https://egomemreason.github.io/",
+      "codeUrl": "https://github.com/Ziyang412/EgoMemReason",
+      "primaryCategory": "benchmarks",
+      "status": "complete",
+      "problemAnswer": "如何构建一个 Benchmark，评估模型能否在长时间的第一人称视频中，利用分散在不同时间的多个历史证据进行记忆和推理，包括具体物体的状态变化、不同事件之间的关系，以及长期行为规律",
+      "motivationAnswer": "对于 Smart Glasses 等持续感知环境的助手，长期记忆非常重要。但现有的一些长视频 Benchmark 更关注感知、事件定位和整体摘要，缺乏对跨时间多证据推理的系统评估。\n实际场景中，模型不仅需要记住过去发生了什么，还需要将几天内分散的历史信息联系起来，例如追踪同一个物体的状态变化、判断事件顺序，或者总结用户长期的行为习惯。\n因此，这篇工作希望构建一个 Benchmark，从 Entity、Event 和 Behavior 三个层面评估模型的长期记忆推理能力。",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "evaluationDesign": {
+        "dataset": "基于 EgoLife 的跨天第一人称视频构建，共 500 道经过人工验证的选择题。其中 Entity Memory 200 道、Event Memory 200 道、Behavior Memory 100 道。每道题平均需要整合 5.1 个视频证据片段，平均历史回溯跨度为 25.9 小时",
+        "tasks": "三种记忆类型、六项任务：Entity Memory（状态追踪、时间计数）、Event Memory（事件排序、事件关联）、Behavior Memory（空间偏好推理、活动规律推理）",
+        "metricsProtocol": "使用多项选择题 Accuracy（%）进行评测，分别报告六项具体任务、三种 Memory Type 和 Overall Accuracy。\n问题设置在特定 Query Time，要求模型利用此前跨时间分布的历史视频证据作答，并比较不同 MLLM 与 Agent 方法的表现。"
+      }
     }
   ]
 }
