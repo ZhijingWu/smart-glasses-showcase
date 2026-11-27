@@ -1,14 +1,14 @@
 {
-  "version": "2026-11-23-v4",
-  "snapshotSHA256": "41da153c054b6b87df9213a5bf37dc20b5197ca8cd873819e47cd02a8639177a",
-  "paperCount": 30,
+  "version": "2026-11-28-v5",
+  "snapshotSHA256": "2217765ee11788a6cf74ee7800d736d0c129dc40a7735cd81a064ae127aaf85b",
+  "paperCount": 38,
   "files": {
     ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "approved-snapshot.json": "41da153c054b6b87df9213a5bf37dc20b5197ca8cd873819e47cd02a8639177a",
-    "assets/index-Byj6rwEJ.js": "63e3496ad35e097eec5b04afd1ac6d5dba41bef768f1de3417687c4c472b7560",
-    "assets/index-CSZRUObT.css": "4290d02dabf97dfc94458f431f7c3aa31e3fb792c41ba9d4c6ec5f1232904735",
+    "approved-snapshot.json": "2217765ee11788a6cf74ee7800d736d0c129dc40a7735cd81a064ae127aaf85b",
+    "assets/index-Dxq_PQX9.js": "6d4a836858024941212725ed6c40fda57668614641463841103db91ca617d35f",
+    "assets/index-INfzOROA.css": "35c52dd339750b675161d6bb4d32ace3da5f7367d105d803c2d8a4e7039ce758",
     "favicon.svg": "4492141b3441d6964dfdce06ad039c91b8a8d94db72e3e25c2cf7b3b9b807140",
-    "index.html": "846c5da087216b673930544d3c8f35d834f2fd129f0623f4e83b466aaa32ceec",
+    "index.html": "0b7c34f6d7993c9b2c18e994b10bb534e9a6fc9d1f6cf47e98764c64ee7c40b2",
     "THIRD_PARTY_NOTICES.txt": "1ac17f5a9b7133e74d4974e4ad8545c20367c2757f52805f1b17b48515d92d99"
   }
 }

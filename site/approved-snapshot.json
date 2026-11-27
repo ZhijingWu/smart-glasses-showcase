@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "2026-11-23-v4",
+  "version": "2026-11-28-v5",
   "papers": [
     {
       "id": "point3r",
@@ -243,6 +243,18 @@
         "dataset": "公开的室内3D场景重建数据集ScanNet、ScanNet++和ARKitScenes的验证集，从中选取 288 段真实视频，再做出 5,000 多对题目",
         "tasks": "三个大类：configurational, measurement estimation, spatiotemporal\n八个任务：\n1. Configurational tasks : object count, relative distance, relative direction, route plan\n2. Measurement estimation : object size, room size, absolute distance\n3. Spatiotemporal : Appearance Order",
         "metricsProtocol": "Metrics：\n选择题（MCA）： 准确率（ACC）\n数字题（NA）：平均相对准确率（MRA）\nProtocol：\n主要采用离线视频问答设置，模型根据给定的视频回答空间问题，不要求实时增量处理视频流"
+      },
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "完整的室内走访视频，以及一道关于所见空间的问题。",
+          "output": "估计数量、大小或距离，或从选项中选出相对方向、路线等答案。",
+          "evaluated": "R2 · 空间理解：看完房间后，能说清家具之间有多远、朝哪边走能到。",
+          "missing": "R1 · 流式感知、R5 · 长期记忆、R6 · 主动记忆：看完整段再答即可。没考途中何时看懂、该记哪一幕、几小时后还记得多少。\nR3 · 实例身份、R4 · 动态状态：数对椅子就能得分，没问是不是上次那把、后来挪没挪过。\nR7 · 用户意图、R8 · 主动辅助、R9 · 持续交互：目的地已给出，不考猜目的地、主动指路或听完纠正再改路线。"
+        },
+        "coverage": {
+          "R2": "距离比较、相对方向和室内路线题都要求理解物品之间的几何关系。"
+        },
+        "source": "https://arxiv.org/html/2412.14171"
       }
     },
     {
@@ -265,6 +277,22 @@
         "dataset": "六个视频源 HourVideo、ScanNet、EgoLife、EgoBlind、EPIC-KITCHENS 和 TeleEgo 中筛选的532个第一人称视频，从中筛选8,114 对 QA并经过人工审核。",
         "tasks": "四个维度：\n1. Position & Orientation\n2. Trajectory & Movement\n3. Proximity & Reachability\n4. Category & Quantity",
         "metricsProtocol": "Metrics： 多项选择题采用 Accuracy（准确率），分别统计四大任务类别、细分任务以及 Overall 的表现。\nProtocol： 每个问题都有对应的 Query Timestamp，模型只能利用该时刻之前已观察到的视频信息，不能使用未来帧。回答需要结合历史空间信息和用户当前的位置、朝向。"
+      },
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "截至提问时刻的第一人称视频，以及与佩戴者当下位置或朝向有关的空间问题。",
+          "output": "按当时的视角选择方向、距离、移动轨迹或可达关系等答案。",
+          "evaluated": "R1 · 流式感知：人转过身，再问同一件东西在哪边，得按现在的朝向回答。\nR2 · 空间理解：以佩戴者为参照，判断物品在哪个方向、离人多远、能否够到。\nR4 · 动态状态：看起来位置变了，要分清是人走了，还是东西被挪了。\nR5 · 长期记忆：拿起锤子一个多小时后，还要记得最初是从哪里拿的。",
+          "missing": "R3 · 实例身份：题目指定要找哪件东西，不用从几个同款里认出它。\nR6 · 主动记忆：锤子的旧位置答对就行，当时挑了什么记没有单独考。\nR7 · 用户意图、R8 · 主动辅助、R9 · 持续交互：用户先问东西在哪。找它做什么、该不该提前提醒、指错后怎么改，都没问。"
+        },
+        "coverage": {
+          "R1": "重复提问时，佩戴者已转身或移动，正确方向取决于此刻的观察。",
+          "R2": "题目要求以佩戴者为参照判断距离、方向或可达性。",
+          "R4": "轨迹题要求分清是物品本身发生位移，还是佩戴者换了位置。",
+          "R5": "官方锤子题在首次拿锤一小时后追问最初从哪里拿，必须用到当时的观察。"
+        },
+        "source": "https://arxiv.org/html/2606.15200",
+        "extraSource": "https://huggingface.co/datasets/cocowy1/UCS-Bench/blob/main/QAs/1c7426ad-b6ba-4494-897c-537dd4a201e9-mcq.json"
       }
     },
     {
@@ -287,6 +315,20 @@
         "dataset": "基于 ScanNet++ 的 183 个室内场景，包含约 12.1 小时第一人称视频、21,331 个物体实例和 225 万条带时间戳的查询。\n查询由 22 种操作符组合生成，涉及观察历史、相机相对关系和物体间空间关系。每个问题的答案由查询时刻之前的可见物体历史确定。",
         "tasks": "根据查询时刻之前已经观察到的第一人称视频和自然语言指代描述，在三维空间中定位对应的物体实例。\n查询条件主要涉及三个维度：\n1. Observation History：物体被观察到的时间、顺序和最近观察信息。\n2. Egocentric Relationships：物体相对于观察者的方向、距离等空间关系。\n3. Allocentric Structure：不同物体之间的空间关系。",
         "metricsProtocol": "Metrics：\n- Coverage：候选记忆中是否至少包含一个正确目标。\n- Selection F1：在至少有正确目标可供选择时，衡量模型能否正确选出目标物体集合。\n- Full F1：衡量整个三维物体定位流程的最终表现，包括历史物体未被保留造成的错误。\n\nProtocol：\n每个问题都有 Query Timestamp，模型只能使用该时刻之前已经观察到的视频信息，不能利用未来帧。目标物体可能已经离开当前视野，需要结合历史观察进行定位。"
+      },
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "提问前的第一人称观察和一句指物描述；不同设置可提供估计或真值几何信息。",
+          "output": "用场景坐标中的三维框标出符合描述的物品，可以有多个目标。",
+          "evaluated": "R1 · 流式感知：人一转身，看得见的显示器就变了。要选出提问那一刻能看到的。\nR2 · 空间理解：听到“最早看见的水槽旁边的柜子”，要能在三维场景里指出对应的柜子。",
+          "missing": "R3 · 实例身份、R4 · 动态状态：按描述框出柜子即可，没问重访时能否认出原来那件，或发现它被挪过。\nR5 · 长期记忆、R6 · 主动记忆：只需记得这次走访的先后，没考该挑哪段留存、隔几小时还能否找回。\nR7 · 用户意图、R8 · 主动辅助、R9 · 持续交互：用户明确说要找什么，框出目标就答完了。主动帮找、指错后再确认都不在题里。"
+        },
+        "coverage": {
+          "R1": "“当前可见的显示器”要求按提问时的视野选出目标，转身会改变答案。",
+          "R2": "找出最早看见的水槽旁的柜子，需要结合当时的视角和两个物品的相对位置。"
+        },
+        "source": "https://www.alphaxiv.org/abs/2609.egorecall.pdf",
+        "extraSource": "https://3dlg-hcvc.github.io/EgoRecall/"
       }
     },
     {
@@ -309,6 +351,21 @@
         "dataset": "第一人称的 SpaCR 数据集，包含来自 ScanNet 的 620 个视频会话，并补充了 95 个真实场景上构建出来的对话，平均每个对话回合 230 次，以及 3,100 个评估查询。",
         "tasks": "1. Object grounding\n2. Qualitative relations\n3. Geometric properties\n4. Counterfactual spatial reasoning",
         "metricsProtocol": "Metrics：\n- Answer Accuracy：衡量模型最终回答是否正确。\n- Object Recall：对于涉及多个物体的问题，检查模型是否正确找回符合条件的物体集合。\n\nProtocol：\n模型根据历史视频、跨会话的对话记录和当前问题进行空间推理。"
+      },
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "多次室内走访的画面、与物品有关的对话历史，以及当前的空间问题。",
+          "output": "结合说过的事实与眼前的几何关系，指出物品、给出数量，或判断某种摆放是否可行。",
+          "evaluated": "R1 · 流式感知：再次走进房间时，判断之前聊过的东西现在看不看得见。\nR2 · 空间理解：根据物品的大小和位置，判断谁挨着谁、东西能不能放得下。\nR3 · 实例身份：重访时认出之前谈到的那一件，才能把用户说过的话用对地方。\nR5 · 长期记忆：这次找东西，可能要用到上次走访时看到的物品和说过的话。",
+          "missing": "R4 · 动态状态：用户能说物品被挪了。要是没人提，助手会不会自己发现？这里没测。\nR6 · 主动记忆：旧画面和对话都可查，不用在当时决定哪句话值得记。\nR7 · 用户意图、R8 · 主动辅助：用户会直接问要找什么、能否放下，不用助手猜需求或主动开口。\nR9 · 持续交互：后面的问话已经写好，测不到用户纠正这次回答后，助手会怎么接。"
+        },
+        "coverage": {
+          "R1": "当前视野题要求判断先前谈过的物品此刻是否重新出现在眼前。",
+          "R2": "容纳、邻近和假设摆放题必须结合物品的几何关系作答。",
+          "R3": "重访同一场景时，要把早先谈话中的事实重新对应到眼前的同一件物品。",
+          "R5": "跨会话题要用以前走访时看到的物品及当时说过的话回答新问题。"
+        },
+        "source": "https://arxiv.org/html/2610.05526"
       }
     },
     {
@@ -331,6 +388,20 @@
         "dataset": "视频来源参考了 9 个公开或可访问的来源，涵盖五大模式：室内演示（RoomTour3D ）、自我中心活动（Ego4D）、户外/世界场景（Sekai、OmniWorld、YouTube 徒步游览）、驾驶视频（CODa 和 Honda HDD），以及带有空间注释的 3D 环境（ARKitScenes 和 VSI-Bench）。后续由12名受过培训的批注员完成 348 个源视频中的 1,680 个问题。",
         "tasks": "L1——Instantaneous Egocentric Perception（即时空间感知）\nL2——Spatial-Temporal Context Tracking（时空上下文追踪）\nL3——Generative Spatial Reasoning（生成式空间推理）\nL4——Allocentric Spatial Mapping（全局空间建图）",
         "metricsProtocol": "Metrics：Multiple-choice Accuracy（选择题准确率），分别报告 L1–L4 四个层级以及 Overall 的成绩。\nProtocol：每道问题都有 Query Timestamp，模型只能使用查询时刻之前的视频，不能访问未来帧。"
+      },
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "截至提问时刻的视频前缀和空间问题，后续画面不可见。",
+          "output": "从选项中判断当前空间关系、重访时的场景变化，或可行路线与整体布局。",
+          "evaluated": "R1 · 流式感知：从眼前几帧看出谁挡住了谁、什么东西正在移动。\nR2 · 空间理解：把沿途见过的地方连起来，判断哪些路相通、往哪边能走到。\nR4 · 动态状态：再看同一个地方，指出多了什么、少了什么，或哪件东西换了位置。",
+          "missing": "R3 · 实例身份：认出少了什么就行，不用从几件同款里挑出原来那件。\nR5 · 长期记忆、R6 · 主动记忆：线索都在同一段视频里，不考隔几小时再认路，也不考沿途挑了哪些画面保存。\nR7 · 用户意图、R8 · 主动辅助、R9 · 持续交互：去哪儿、何时问都已给定。猜目的地、主动带路、回应纠正都在题目之外。"
+        },
+        "coverage": {
+          "R1": "当前视角题只依赖提问附近的画面，直接询问可见物间的距离、遮挡或运动。",
+          "R2": "路线与地图题要求从先后经过的地方推断连通关系和方向。",
+          "R4": "物品变化题明确比较两次观察，询问什么被加入、移走或挪动。"
+        },
+        "source": "https://arxiv.org/html/2606.03890"
       }
     },
     {
@@ -472,6 +543,20 @@
         "dataset": "8,453道经人力验证的问题，涵盖约324小时的一周及短期录音，测试七项能力，从识别物体或房间到回忆谁见过，以及推理访问房间",
         "tasks": "分为两大类，共七种任务：\n1. Object Identity & Memory（Q01–Q04）：判断是否为同一个物体实例、谁看到了它、最后由谁看到，以及它在哪些时间片段中出现。\n2. Room Identity & Visit Reasoning（Q05–Q07）：判断房间身份、房间之间的最短路径，以及房间访问的顺序、时长和次数。",
         "metricsProtocol": "主要使用 Micro Accuracy 和 Macro Accuracy：\n- Micro：所有问题的整体准确率。\n- Macro：七类任务分别计算准确率后取平均，避免题目数量不同造成偏重。\n\n评测采用选择题形式。Direct VLM 使用有限的采样视频帧，Agent 则能够主动检索视频片段和历史信息。"
+      },
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "物品或房间的参考图和相关佩戴者的目击记录；部分题目还给出时间范围或房间连通图。",
+          "output": "从选项中辨认实例、目击者、目击时段或房间路径；采用 Agent 协议时还需引用目击证据。",
+          "evaluated": "R2 · 空间理解：给出房间连通图，要找出两个房间之间最短的路。\nR3 · 实例身份：换个人戴眼镜，还能认出两段录像里的是同一件东西，还是两件同款。\nR5 · 长期记忆：问起一天多以前的事，还能确认那件东西当时出现过没有。",
+          "missing": "R1 · 流式感知、R4 · 动态状态：最后在哪儿见过有记录，至于眼下看不看得见、中途挪没挪过，题目没问。\nR6 · 主动记忆：知道要找什么以后才查录像也可以，不考拍摄时会留下哪些线索。\nR7 · 用户意图、R8 · 主动辅助、R9 · 持续交互：用户指定要查的物品，不考猜找物原因、提前提醒或听完纠正继续查。"
+        },
+        "coverage": {
+          "R2": "路径题给出房间图，要求在参考图指定的两个房间之间找最短路径。",
+          "R3": "要对照不同视角或佩戴者的记录，区分同一件实物与同类的另一件。",
+          "R5": "部分题要求核实某件物品是否在提问前一天以上的时段出现过。"
+        },
+        "source": "https://arxiv.org/html/2611.25849"
       }
     },
     {
@@ -494,6 +579,21 @@
         "dataset": "数据分为 Daily 和 Sci 两部分：\n- Daily： 来自 Ego4D 的 300 段日常生活视频，约 16 小时，包含 1,242 个标注事件和 1,000 道 QA。\n- Sci： 来自实验室场景的 100 段视频，约 6.5 小时，包含 1,377 个标注事件和 500 道 QA。\n数据标注包含事件的开始、结束时间以及相关对象。",
         "tasks": "三类任务：\n- Information Capture（IC）： 及时保存价格、标签、说明等短暂出现的信息。\n- State Tracking（ST）： 追踪物体状态变化，例如开关状态和持续时间。\n- Location Tracking（LT）： 追踪物体从哪里被拿走、放在哪里，以及位置变化。\n每种任务都有两个主动性层级：Notification（及时发出通知）和 Intervention（主动调用工具，开始、维护并结束记忆任务）",
         "metricsProtocol": "- 事件匹配与时机： 评估模型通知或工具调用是否匹配正确事件，以及开始时间的偏差\n- Precision / Recall / F1： 评价主动行为是否准确、是否漏掉重要事件\n- ProactEgoMem-QA： 根据模型主动获取的记忆回答后续选择题，计算 Accuracy"
+      },
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "连续的第一人称画面和要留意的记忆需求；具体回忆题稍后才出现。",
+          "output": "通知模式下判断何时开口；采集模式下启停记忆工具，再用留下的记录回答选择题。",
+          "evaluated": "R1 · 流式感知：标签一闪而过时，要能认出这正是用户要留意的信息。\nR4 · 动态状态：记清设备开关过几次，或物品从哪里被拿走、又放到了哪里。\nR6 · 主动记忆：还不知道稍后会问哪处细节，就得决定什么时候开始记、什么时候停。\nR8 · 主动辅助：看到需要用户留意的事就提醒，其余时候保持安静。",
+          "missing": "R2 · 空间理解、R3 · 实例身份：记录物品从哪搬到哪即可，不用算物间距离，也不用从同款里辨认它。\nR5 · 长期记忆：事后问的是这次记下的内容，没考几小时后或下次戴眼镜还记不记得。\nR7 · 用户意图：要留意哪类事已经交代过，不用助手自己猜。\nR9 · 持续交互：发完通知还有记忆问答，但没有沿着用户对通知的回应继续聊。"
+        },
+        "coverage": {
+          "R1": "通知要对准标签出现或设备仍在运行的时刻，必须读懂眼前线索。",
+          "R4": "追踪题会问设备改变了几次状态，或物品从哪里被移到哪里。",
+          "R6": "具体回忆题后来才出现，助手要先决定何时启动和停止记录。",
+          "R8": "通知模式要求助手在合适的线索出现时主动开口，其余时刻保持安静。"
+        },
+        "source": "https://arxiv.org/html/2610.30089"
       }
     },
     {
@@ -516,6 +616,19 @@
         "dataset": "3,141 段真实第一人称视频，总计 388 小时，使用 Ray-Ban Meta 智能眼镜采集。\n包含 9,448 个 QA Pair，每道题包含提问时间和对应的历史视频证据区间。",
         "tasks": "流式 Episodic Memory Retrieval：模型在某个时间点接收到历史记忆问题，需要利用此前的视频回答，并找出对应的证据时间段。\n涵盖八类问题：位置变化、连续动作、计数、视觉细节回忆、时间顺序、持续时长、物体比较、空间关系推理。",
         "metricsProtocol": "Metrics：\nQA Accuracy：回答是否正确。\nTemporal IoU：预测证据时间段与 Ground Truth 时间段的重合程度。\nGrounded QA：同时考虑回答正确性和证据定位是否成功。\n\nProtocol：\nCausal Streaming：只能访问提问时间之前的视频，不能看到未来帧。"
+      },
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "截至提问时刻的眼镜视频，以及由眼前情景引出的一道回忆题。",
+          "output": "自由作答或选择答案，同时标出足以支持回答的历史视频时段。",
+          "evaluated": "R1 · 流式感知：要看清手边这件东西，才能说出它和刚才见过的那件有什么不同。\nR2 · 空间理解：根据刚走过的路，说清从现在的位置怎么走回去。",
+          "missing": "R3 · 实例身份：拿两件相似物品作比较时，不用证明它们是同一件。\nR4 · 动态状态：钥匙最后一次出现在哪儿有画面可查，后来有没有被拿走没有追问。\nR5 · 长期记忆、R6 · 主动记忆：找回几分钟前的画面即可，没考几小时后还记不记得，也没要求事先挑着记。\nR7 · 用户意图、R8 · 主动辅助、R9 · 持续交互：给出问题，答完并指出证据就结束。猜需求、主动提醒和回应质疑都没测。"
+        },
+        "coverage": {
+          "R1": "物品比较题明确要求用眼前物品的属性与先前所见进行比较。",
+          "R2": "返回路线题要求从当前位置推断怎样走回先前的地点。"
+        },
+        "source": "https://arxiv.org/html/2607.02689"
       }
     },
     {
@@ -555,7 +668,352 @@
         "dataset": "基于 EgoLife 的跨天第一人称视频构建，共 500 道经过人工验证的选择题。其中 Entity Memory 200 道、Event Memory 200 道、Behavior Memory 100 道。每道题平均需要整合 5.1 个视频证据片段，平均历史回溯跨度为 25.9 小时",
         "tasks": "三种记忆类型、六项任务：Entity Memory（状态追踪、时间计数）、Event Memory（事件排序、事件关联）、Behavior Memory（空间偏好推理、活动规律推理）",
         "metricsProtocol": "使用多项选择题 Accuracy（%）进行评测，分别报告六项具体任务、三种 Memory Type 和 Overall Accuracy。\n问题设置在特定 Query Time，要求模型利用此前跨时间分布的历史视频证据作答，并比较不同 MLLM 与 Agent 方法的表现。"
+      },
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "提问时刻以前的跨日第一人称生活视频，以及一道需要综合多次观察的选择题。",
+          "output": "选择最能解释物品变化、事件联系或长期行为习惯的答案。",
+          "evaluated": "R3 · 实例身份：同一件东西出现几次只能算一件，还得分清长得像的另一件。\nR4 · 动态状态：能把同一只碗从台面到水槽、再到餐桌的经过串起来。\nR5 · 长期记忆：要把几天里看见的事串起来，才能答出一个人平时有什么习惯。",
+          "missing": "R1 · 流式感知、R2 · 空间理解：知道一个人常在哪儿做事就能答，不用判断眼前发生了什么或物品相距多远。\nR6 · 主动记忆：看的是能否找齐过去的线索，没有追问当时会主动留下哪几段。\nR7 · 用户意图、R8 · 主动辅助、R9 · 持续交互：问的是过去的习惯，不考猜今天的打算、主动提建议，或听完反馈再调整。"
+        },
+        "coverage": {
+          "R3": "跨时段计数要求同一件物品重复出现只算一次，同时区分外观相似的其他实例。",
+          "R4": "累积状态追踪要求比较同一只碗先后放在台面、水槽和餐桌的过程。",
+          "R5": "跨日题须合并相隔数小时或数天的观察，单看片段不足以判断。"
+        },
+        "source": "https://arxiv.org/html/2605.09874"
+      }
+    },
+    {
+      "id": "apm-bench",
+      "title": "APM-Bench",
+      "fullTitle": "APM-Bench: Benchmarking Cross-session Persistent Memory for Egocentric Streaming Video Assistants",
+      "authors": "Jianguo Huang et al.",
+      "year": 2026,
+      "venue": "arXiv Preprint",
+      "paperUrl": "https://arxiv.org/abs/2609.37559",
+      "projectUrl": "",
+      "codeUrl": "",
+      "primaryCategory": "benchmarks",
+      "status": "unread",
+      "problemAnswer": "",
+      "motivationAnswer": "",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "当前会话截至此刻的画面和可访问的往次会话记忆；部分提醒条件已由用户登记。",
+          "output": "选择场景或历史问题的答案，证据不足时可指出无法判断；提醒题在检查点决定沉默或介入，并按要求给出回应。",
+          "evaluated": "R1 · 流式感知：看提问那一刻的画面，说出人正在做什么，或读出眼前的字。\nR2 · 空间理解：看清眼前两件物品，判断一件在另一件的哪一边。\nR4 · 动态状态：对照前后几次戴眼镜的记录，能说出物品的位置或状态怎么变了。\nR5 · 长期记忆：再次戴上眼镜时，还记得上一次看到了什么。\nR8 · 主动辅助：到了可能要提醒的时刻，决定要不要开口，以及该说什么。",
+          "missing": "R3 · 实例身份：物品由题目指定，不用从几个外观相同的物件里辨认它。\nR6 · 主动记忆：整段录像都可以留，答对旧事也看不出助手当时会挑什么记。\nR7 · 用户意图：只看提醒是否合适，没有单独核对助手猜的目标和用户心里的打算。\nR9 · 持续交互：每次提醒分开评。用户若说“你理解错了”，助手会怎么接？这里没测。"
+        },
+        "coverage": {
+          "R1": "当前场景题直接询问眼前正在做的动作、可见文字或物体。",
+          "R2": "空间题要求判断当前场景中指定物体彼此的位置关系。",
+          "R4": "实体状态追踪要求把以往会话中的物品位置或状态变化联系起来。",
+          "R5": "跨会话题必须使用已经结束的会话中的证据。",
+          "R8": "提醒题要求在给定检查点决定安静还是介入，并在介入时给出合适回应。"
+        },
+        "source": "https://arxiv.org/html/2609.37559"
+      }
+    },
+    {
+      "id": "egolifeqa",
+      "title": "EgoLifeQA",
+      "fullTitle": "EgoLife: Towards Egocentric Life Assistant",
+      "authors": "Jingkang Yang et al.",
+      "year": 2025,
+      "venue": "CVPR 2025",
+      "paperUrl": "https://openaccess.thecvf.com/content/CVPR2025/html/Yang_EgoLife_Towards_Egocentric_Life_Assistant_CVPR_2025_paper.html",
+      "projectUrl": "https://egolife-ai.github.io/",
+      "codeUrl": "",
+      "primaryCategory": "benchmarks",
+      "status": "unread",
+      "problemAnswer": "",
+      "motivationAnswer": "",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "跨日的第一人称生活视听记录，以及在某个时刻提出的物品、活动或计划问题。",
+          "output": "从选项中选出与此前经历相符的回忆、解释或建议。",
+          "evaluated": "R2 · 空间理解：问昨晚吃饭时谁坐在身边，要记清大家的座位关系。\nR3 · 实例身份：手里拿着一把刀，要能找回上一次用这把刀的经历。\nR4 · 动态状态：对比前后两次画面，找出后来什么东西替换了桌旁的三脚架。\nR5 · 长期记忆：把过去几天的经历连起来，回想某件事，或看出反复出现的习惯。",
+          "missing": "R1 · 流式感知：事后能说出三脚架被什么换掉就行，不用在更换那一刻察觉。\nR6 · 主动记忆：多天的生活记录都可用，没有要求当时就决定哪件事值得留下。\nR7 · 用户意图：有道题问接下来打算做什么，用户先前说过要去看狗，记得原话就能答。\nR8 · 主动辅助、R9 · 持续交互：用户问了才给建议。该不该主动提醒、用户不同意后怎么调整，都没往下考。"
+        },
+        "coverage": {
+          "R2": "邻座题询问昨晚吃饭时谁坐在佩戴者旁边，答案取决于相对座位关系。",
+          "R3": "使用记录题以手里这把刀为参照，要求找回同一把刀之前被使用的时间。",
+          "R4": "替换题要求对照前后两次观察，指出后来是哪件物品取代了桌旁的三脚架。",
+          "R5": "跨日生活问答会在今天追问前几天的经历，也要求从多次经历归纳习惯。"
+        },
+        "source": "https://arxiv.org/html/2503.03803",
+        "extraSource": "https://huggingface.co/datasets/lmms-lab/EgoLife/blob/main/EgoLifeQA/EgoLifeQA_A1_JAKE.json"
+      }
+    },
+    {
+      "id": "egoserve",
+      "title": "EgoServe",
+      "fullTitle": "Vinci2: Providing Proactive Assistance in Continuous Egocentric Videos",
+      "authors": "Sitong Gong et al.",
+      "year": 2026,
+      "venue": "ECCV 2026",
+      "paperUrl": "https://arxiv.org/abs/2607.11523",
+      "projectUrl": "https://sitonggong.github.io/EgoServe-page/",
+      "codeUrl": "",
+      "primaryCategory": "benchmarks",
+      "status": "unread",
+      "problemAnswer": "",
+      "motivationAnswer": "",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "连续的日常第一人称视频，既有眼前的活动，也有可能与当前帮助相关的历史经历。",
+          "output": "决定保持安静还是主动介入，并在介入时给出适合当下的服务内容。",
+          "evaluated": "R1 · 流式感知：眼前出现危险时，得当场认出来，提醒才来得及。\nR5 · 长期记忆：有些提醒要结合用户前几天反复做过的事，单看眼前这一幕还不够。\nR8 · 主动辅助：用户没开口，也要判断此时该不该帮忙、说什么才有用。",
+          "missing": "R2 · 空间理解、R3 · 实例身份、R4 · 动态状态：安全题看提醒是否及时，没单独问物间距离、物品身份或它经历了哪些变化。\nR6 · 主动记忆、R7 · 用户意图：按习惯提醒用户就能答，没考当时挑了什么记，也没单独核对用户心里的目标。\nR9 · 持续交互：给出帮助就结束。用户接受或拒绝后，助手怎样接着帮，这里没测。"
+        },
+        "coverage": {
+          "R1": "即时安全提示要识别此刻画面中的危险，才能在合适时刻发出提醒。",
+          "R5": "长时服务要求结合先前会话或不同日期的经历，例如利用反复出现的习惯。",
+          "R8": "协议同时考察是否主动介入和介入时说什么，安静也是可选决定。"
+        },
+        "source": "https://arxiv.org/html/2607.11523"
+      }
+    },
+    {
+      "id": "egostream",
+      "title": "EgoStream",
+      "fullTitle": "EGOSTREAM: A Diagnostic Benchmark for Streaming Episodic Memory in Egocentric Vision",
+      "authors": "Rosario Forte et al.",
+      "year": 2026,
+      "venue": "NeurIPS 2026",
+      "paperUrl": "https://arxiv.org/abs/2605.31557",
+      "projectUrl": "https://coai-iplab.github.io/EgoStream/",
+      "codeUrl": "",
+      "primaryCategory": "benchmarks",
+      "status": "unread",
+      "problemAnswer": "",
+      "motivationAnswer": "",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "视频按时间只看一遍，模型先形成有限记忆；具体问题在测回忆时才揭示。",
+          "output": "在评测者设定的答案有效窗内，分别在证据刚结束或延迟一段时间时选择答案。",
+          "evaluated": "R2 · 空间理解：要记得剪刀当时放在桌面上，还是收在抽屉里。\nR4 · 动态状态：回答“我把配电箱关上了吗”，要记住关上这个动作有没有发生。\nR5 · 长期记忆：同一件事隔几个小时再问，看还能不能想起来。\nR6 · 主动记忆：看视频时还不知道会问什么，得先挑出有用的信息记下来。",
+          "missing": "R1 · 流式感知：即时题问刚才看到了什么。旧答案何时失效由评测者划定，不用助手自己发现。\nR3 · 实例身份：记得剪刀在哪儿就能答，不用辨认是不是上次那一把。\nR7 · 用户意图、R8 · 主动辅助、R9 · 持续交互：何时再问由评测者决定，不考猜用户目标、主动提醒或听完反馈改答。"
+        },
+        "coverage": {
+          "R2": "剪刀题要在桌上、抽屉内等答案中识别剪刀与周围物品的空间关系。",
+          "R4": "事件题会问“我把配电箱关上了吗”，要求识别物品是否经历一次状态转换。",
+          "R5": "延迟回忆包含相隔数小时的提问，此时必须利用早先形成的记忆。",
+          "R6": "题目到回忆时才揭示，协议要求提前压缩保留视频信息以备提问。"
+        },
+        "source": "https://arxiv.org/html/2605.31557"
+      }
+    },
+    {
+      "id": "ovq2d",
+      "title": "OVQ2D",
+      "fullTitle": "Online Episodic Memory Visual Query Localization with Egocentric Streaming Object Memory",
+      "authors": "Zaira Manigrasso et al.",
+      "year": 2026,
+      "venue": "WACV 2026",
+      "paperUrl": "https://openaccess.thecvf.com/content/WACV2026/html/Manigrasso_Online_Episodic_Memory_Visual_Query_Localization_with_Egocentric_Streaming_Object_WACV_2026_paper.html",
+      "projectUrl": "https://coai-iplab.github.io/research/manigrasso2026online/",
+      "codeUrl": "",
+      "primaryCategory": "benchmarks",
+      "status": "unread",
+      "problemAnswer": "",
+      "motivationAnswer": "",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "第一人称视频只按顺序看一遍，到查询时才给出目标实物的图片。",
+          "output": "找到该实物上一次连续出现的那段画面，并逐帧标出它的二维框。",
+          "evaluated": "R3 · 实例身份：拿到照片后，在旧画面里认出同一件东西，逐帧框出它最后一次出现的位置。\nR6 · 主动记忆：视频只看一遍，目标照片稍后才给，得提前留下能帮自己找回物品的线索。",
+          "missing": "R1 · 流式感知、R2 · 空间理解、R4 · 动态状态：只框最后一次看见它的画面。眼下的场景、物间关系、后来是否移动，都没问。\nR5 · 长期记忆：只看一遍限制了回看，但不要求几小时后或下次使用时还能找到它。\nR7 · 用户意图、R8 · 主动辅助、R9 · 持续交互：目标就在照片上。要不要主动帮找、认错后怎么跟用户确认，都没考。"
+        },
+        "coverage": {
+          "R3": "要把查询图片中的特定实物与它在先前画面中最后一次出现逐帧对上。",
+          "R6": "视频只能单遍处理，查询时须用预先形成的紧凑记忆找回目标轨迹。"
+        },
+        "source": "https://arxiv.org/html/2411.16934"
+      }
+    },
+    {
+      "id": "pro2bench",
+      "title": "Pro²Bench",
+      "fullTitle": "Plan, Watch, Recover: A Benchmark and Architectures for Proactive Procedural Assistance",
+      "authors": "Kaustav Kundu et al.",
+      "year": 2026,
+      "venue": "arXiv Preprint",
+      "paperUrl": "https://arxiv.org/abs/2606.04970",
+      "projectUrl": "",
+      "codeUrl": "",
+      "primaryCategory": "benchmarks",
+      "status": "unread",
+      "problemAnswer": "",
+      "motivationAnswer": "",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "用户一开始说明的任务、截至决策点的操作画面和参考对话历史；画面可来自不同视角。",
+          "output": "决定保持安静还是打断；需要介入时，给出下一步指导或针对错误步骤的纠正建议。",
+          "evaluated": "R1 · 流式感知：看刚做完的动作，判断这一步完成了，还是漏做、做错了。\nR8 · 主动辅助：判断现在该不该打断。需要帮忙时，说清下一步怎么做或哪一步要改。",
+          "missing": "R2 · 空间理解、R3 · 实例身份、R4 · 动态状态：看的是步骤做对没有，不另考物间关系、同一件器具的辨认或它前后的状态。\nR5 · 长期记忆、R6 · 主动记忆：跟上这次操作就够了，不用回忆上一次的经历，也不用为以后的问题提前留证。\nR7 · 用户意图：用户一开始就说了要做什么，不用猜他的目标。\nR9 · 持续交互：后面的操作早已录好，换一条建议也看不到用户会怎么回应。"
+        },
+        "coverage": {
+          "R1": "决策点要求从刚看到的操作判断步骤是否完成或发生偏离。",
+          "R8": "助手在步骤完成或出错时决定是否打断，并在打断时给出相应指导。"
+        },
+        "source": "https://arxiv.org/html/2606.04970"
+      }
+    },
+    {
+      "id": "telego",
+      "title": "TeleEgo",
+      "fullTitle": "TeleEgo: Benchmarking Egocentric AI Assistants in the Wild",
+      "authors": "Jiaqi Yan et al.",
+      "year": 2025,
+      "venue": "arXiv Preprint",
+      "paperUrl": "https://arxiv.org/abs/2510.23981",
+      "projectUrl": "https://teleai-uagi.github.io/TeleEgo/",
+      "codeUrl": "",
+      "primaryCategory": "benchmarks",
+      "status": "unread",
+      "problemAnswer": "",
+      "motivationAnswer": "",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "沿生活时间线接收同步的第一人称视频、声音和文本线索，问题在指定时刻出现。",
+          "output": "在给定响应窗口内，根据当前场景或当日历史作选择、判断或自由回答。",
+          "evaluated": "R1 · 流式感知：结合眼前的动作和同时听到的声音，及时答出现在发生了什么。\nR5 · 长期记忆：到了当天晚些时候，还要答得出早先发生过的事。\nR7 · 用户意图：牌局上有人指向同伴，要看出这个手势是在提醒对方出牌。",
+          "missing": "R2 · 空间理解、R3 · 实例身份、R4 · 动态状态：读懂手势就能答这类题，没单独考物间距离、实物重认或物品状态变化。\nR6 · 主动记忆：晚些时候还记得就能答，不追问最初是怎么决定哪些事值得记的。\nR8 · 主动辅助、R9 · 持续交互：由题目决定何时开口。延迟再问也没用到用户对上一轮回答的反馈。"
+        },
+        "coverage": {
+          "R1": "当前情景理解题要求在规定窗口内结合此刻的动作与声音作答。",
+          "R5": "长时回忆题要求找回当日早先或跨时段的经历，并可在后续时间点再次追问。",
+          "R7": "手势题让模型从牌局上下文推断指向同伴的目的，用户没有直接说出意图。"
+        },
+        "source": "https://arxiv.org/html/2510.23981",
+        "extraSource": "https://arxiv.org/html/2510.23981v4/figs/fig6.jpg"
+      }
+    },
+    {
+      "id": "wagibench",
+      "title": "WAGIBench",
+      "fullTitle": "Benchmarking Egocentric Multimodal Goal Inference for Assistive Wearable Agents",
+      "authors": "Vijay Veerabadran et al.",
+      "year": 2025,
+      "venue": "NeurIPS 2025",
+      "paperUrl": "https://arxiv.org/abs/2510.22443",
+      "projectUrl": "https://facebookresearch.github.io/WAGIBench/",
+      "codeUrl": "",
+      "primaryCategory": "benchmarks",
+      "status": "unread",
+      "problemAnswer": "",
+      "motivationAnswer": "",
+      "inputAnswer": "",
+      "outputAnswer": "",
+      "benchmarkNotebook": {
+        "notes": {
+          "input": "佩戴者的视听片段，可附日历、消息或以往背景；用户当前想做什么留待推断。",
+          "output": "从候选目标中选择，或用自己的话说出最符合用户处境的目标。",
+          "evaluated": "R7 · 用户意图：结合眼前的事和日程、消息，推断用户没说出口的打算。",
+          "missing": "R1 · 流式感知、R2 · 空间理解：画面用来猜目标，不用边看边报告变化，也不用判断距离或方向。\nR3 · 实例身份、R4 · 动态状态：物品能提示用户想做什么，不用认出上次那一件，也不用追踪它后来怎么变。\nR5 · 长期记忆、R6 · 主动记忆：日程和往事可以随题给出，不考助手当初挑了什么记、过了几天还记得多少。\nR8 · 主动辅助、R9 · 持续交互：说出目标就答完了。猜到后要不要帮、猜错后怎么澄清，都没往下问。"
+        },
+        "coverage": {
+          "R7": "用户的真实目标作为参照，模型必须根据场景和可用背景选出或说出该目标。"
+        },
+        "source": "https://arxiv.org/html/2510.22443"
       }
     }
-  ]
+  ],
+  "capabilityFramework": {
+    "layers": [
+      {
+        "name": "Understanding",
+        "zh": "理解世界"
+      },
+      {
+        "name": "Memory",
+        "zh": "记忆世界"
+      },
+      {
+        "name": "Assistance",
+        "zh": "服务用户"
+      }
+    ],
+    "capabilities": [
+      {
+        "id": "R1",
+        "group": "Understanding",
+        "name": "Streaming Perception",
+        "short": "实时感知",
+        "rule": "需要依据当时持续到达的观察，识别当前环境或刚发生的事件。"
+      },
+      {
+        "id": "R2",
+        "group": "Understanding",
+        "name": "Spatial Understanding",
+        "short": "空间理解",
+        "rule": "答案取决于距离、方向、相对位置、几何或连通关系。"
+      },
+      {
+        "id": "R3",
+        "group": "Understanding",
+        "name": "Instance Identity",
+        "short": "实例身份",
+        "rule": "任务要求跨时间或视角认出同一物理实例。"
+      },
+      {
+        "id": "R4",
+        "group": "Understanding",
+        "name": "Dynamic State",
+        "short": "动态状态",
+        "rule": "答案取决于物体前后的位置、属性或状态变化，也包括物品被移入、移走或替换。"
+      },
+      {
+        "id": "R5",
+        "group": "Memory",
+        "name": "Long-horizon Memory",
+        "short": "长时记忆",
+        "rule": "作答需要小时级、跨天或跨会话的历史证据。"
+      },
+      {
+        "id": "R6",
+        "group": "Memory",
+        "name": "Proactive Memory",
+        "short": "主动记忆",
+        "rule": "未来具体问题未知，协议要求事先选择、采集或维护可用记忆。"
+      },
+      {
+        "id": "R7",
+        "group": "Assistance",
+        "name": "User Intention & Goals",
+        "short": "用户意图",
+        "rule": "根据上下文推断用户尚未明说的目标。"
+      },
+      {
+        "id": "R8",
+        "group": "Assistance",
+        "name": "Proactive Assistance",
+        "short": "主动辅助",
+        "rule": "助手需决定是否、何时主动介入，以及提供什么帮助。"
+      },
+      {
+        "id": "R9",
+        "group": "Assistance",
+        "name": "Continuous Interaction",
+        "short": "持续交互",
+        "rule": "后续轮次检验助手如何承接自身回答、用户反馈或纠正。"
+      }
+    ]
+  }
 }
