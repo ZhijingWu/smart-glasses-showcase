@@ -1,14 +1,14 @@
 {
-  "version": "2026-11-28-v5",
-  "snapshotSHA256": "2217765ee11788a6cf74ee7800d736d0c129dc40a7735cd81a064ae127aaf85b",
+  "version": "2026-11-28-v6",
+  "snapshotSHA256": "92176d8e231c12f1cba420901cf70c5ac231cea398f80d232e75b7f685365128",
   "paperCount": 38,
   "files": {
     ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "approved-snapshot.json": "2217765ee11788a6cf74ee7800d736d0c129dc40a7735cd81a064ae127aaf85b",
-    "assets/index-Dxq_PQX9.js": "6d4a836858024941212725ed6c40fda57668614641463841103db91ca617d35f",
+    "approved-snapshot.json": "92176d8e231c12f1cba420901cf70c5ac231cea398f80d232e75b7f685365128",
+    "assets/index-C8wwrJFW.js": "0cd03f39adbb779405ec4e5a5a94a197008b2ec2fc6ec198dc5603238ee6fcca",
     "assets/index-INfzOROA.css": "35c52dd339750b675161d6bb4d32ace3da5f7367d105d803c2d8a4e7039ce758",
     "favicon.svg": "4492141b3441d6964dfdce06ad039c91b8a8d94db72e3e25c2cf7b3b9b807140",
-    "index.html": "0b7c34f6d7993c9b2c18e994b10bb534e9a6fc9d1f6cf47e98764c64ee7c40b2",
+    "index.html": "cdcd7fb417ef47aec0a4ca4ffcc4f2d801d75cdb74cf5db1926b0f976059b40d",
     "THIRD_PARTY_NOTICES.txt": "1ac17f5a9b7133e74d4974e4ad8545c20367c2757f52805f1b17b48515d92d99"
   }
 }
